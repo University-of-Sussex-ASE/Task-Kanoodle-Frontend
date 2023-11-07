@@ -1,0 +1,27 @@
+/* Grid.css */
+.grid {
+  display: grid;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(11, minmax(0, 1fr));
+  gap: 4px;
+  border: 1px solid #000;
+  padding: 2%;
+  width: 96%; /* Adjust the width to fit the screen */
+  height: 50vh;
+  margin: 0 auto; /* Center the grid horizontally */
+}
+
+.grid-cell {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  // aspect-ratio: 1;
+  // &:hover {
+  //   cursor: pointer;
+  // }
+}
+
+.highlight {
+  background-color: rgba(150, 150, 150, 0.8) !important;
+  cursor: pointer;
+}
