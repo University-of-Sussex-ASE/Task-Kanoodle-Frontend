@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Task-Kanoodle-Frontend/static/css/main.e99946fd.css",
-    "main.js": "/Task-Kanoodle-Frontend/static/js/main.796d7796.js",
+    "main.js": "/Task-Kanoodle-Frontend/static/js/main.f2df5bd4.js",
     "static/js/787.8af5f98f.chunk.js": "/Task-Kanoodle-Frontend/static/js/787.8af5f98f.chunk.js",
     "index.html": "/Task-Kanoodle-Frontend/index.html",
     "main.e99946fd.css.map": "/Task-Kanoodle-Frontend/static/css/main.e99946fd.css.map",
-    "main.796d7796.js.map": "/Task-Kanoodle-Frontend/static/js/main.796d7796.js.map",
+    "main.f2df5bd4.js.map": "/Task-Kanoodle-Frontend/static/js/main.f2df5bd4.js.map",
     "787.8af5f98f.chunk.js.map": "/Task-Kanoodle-Frontend/static/js/787.8af5f98f.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e99946fd.css",
-    "static/js/main.796d7796.js"
+    "static/js/main.f2df5bd4.js"
   ]
 }
