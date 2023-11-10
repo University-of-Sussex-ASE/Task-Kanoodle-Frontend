@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./Grid.scss";
 import { PieceDescriptions } from "../common/pieces";
 import { isTileAt, getWidth, getHeight } from "../common/handlePiece";
+import { Button } from "antd";
+import { CloseCircleOutlined } from '@ant-design/icons'
 
 function Grid({
   setSolution,
@@ -171,7 +173,9 @@ function Grid({
   return (
     <div>
       <div className="grid">{grid}</div>
-      <button onClick={() => handleReset()}> Reset </button>
+      <div style={{marginTop:"1%"}}>
+      <Button type="primary" style={{ background: "red" }} onClick={() => handleReset()} icon={<CloseCircleOutlined />}> Reset </Button>
+      </div>
     </div>
   );
 }
