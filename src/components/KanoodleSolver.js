@@ -10,6 +10,7 @@ import { Typography, Button, Row, Col } from "antd";
 import { SwapOutlined, RotateRightOutlined,StepBackwardOutlined ,StepForwardOutlined } from "@ant-design/icons";
 import Spinner from "../common/spinner";
 
+
 function KanoodleSolver() {
   const [pieces, setPieces] = useState(PieceDescriptions);
   const [selectedPiece, setSelectedPiece] = useState(pieces[0]);
@@ -24,43 +25,30 @@ function KanoodleSolver() {
     const currentIndex = rotationValues.indexOf(selectedPiece.rotation);
     const newRotationIndex = (currentIndex + 1) % rotationValues.length;
     const newRotation = rotationValues[newRotationIndex];
-    const newPiece = handlePieceTiles({
-      ...selectedPiece,
-      rotation: newRotation,
-    });
+    const newPiece = handlePieceTiles({ ...selectedPiece, rotation: newRotation });
     setSelectedPiece(newPiece);
-    setPieces(
-      pieces.map((piece) => {
-        if (piece.symbol === newPiece.symbol) {
-          return newPiece;
-        }
-        return piece;
-      })
-    );
-  };
+    setPieces(pieces.map((piece) => {
+      if (piece.symbol === newPiece.symbol) {
+        return newPiece
+      }
+      return piece;
+    }));
+  }
 
   const handleFlip = () => {
-    const newPiece = handlePieceTiles({
-      ...selectedPiece,
-      flipState: !selectedPiece.flipState,
-    });
+    const newPiece = handlePieceTiles({ ...selectedPiece, flipState: !selectedPiece.flipState });
     setSelectedPiece(newPiece);
-    setPieces(
-      pieces.map((piece) => {
-        if (piece.symbol === newPiece.symbol) {
-          return newPiece;
-        }
-        return piece;
-      })
-    );
-  };
+    setPieces(pieces.map((piece) => {
+      if (piece.symbol === newPiece.symbol) {
+        return newPiece
+      }
+      return piece;
+    }));
+  }
 
   const handleSolve = () => {
-    //handle API call to solve
-
-    setIsLoading(true);
-    axios
-      .post("http://localhost:80/kanoodle", initialPiecePlacement)
+    //handle API call to solve  
+    axios.post('https://task3.ase2023group4.rocks/kanoodle', initialPiecePlacement)
       .then((response) => {
         const { solutions, count } = response.data.data;
         setSolution(solutions);
