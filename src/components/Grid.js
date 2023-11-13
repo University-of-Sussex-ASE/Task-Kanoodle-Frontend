@@ -124,6 +124,8 @@ function Grid({
     coloredCells.forEach((cell) => {
       cell.style.backgroundColor = "white";
     });
+    //refresh page
+    window.location.reload(false);
   };
 
   const generateGrid = () => {

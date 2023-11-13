@@ -22,7 +22,7 @@ function KanoodleSolver() {
   const [solutionCount, setSolutionCount] = useState(null);
   const [currentSolution, setCurrentSolution] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [specificSolution, setSpecificSolution] = useState("");
+  const [specificSolution, setSpecificSolution] = useState(0);
 
   const handleRotate = () => {
     const rotationValues = Object.values(Rotation);
@@ -71,19 +71,19 @@ function KanoodleSolver() {
         if (count < 1000) {
           setSolutionCount(count);
           setIsLoading(false);
-        }else{
+        } else {
           setSolutionCount(-1);
           axios.post('https://task3.ase2023group4.rocks/kanoodle', { initialPieces: initialPiecePlacement })
-          .then((response) => {
-            const { solutions, count } = response.data.data;
-            setSolution(solutions);
-            setSolutionCount(count);
-            setSpecificSolution(count);
-            setIsLoading(false);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+            .then((response) => {
+              const { solutions, count } = response.data.data;
+              setSolution(solutions);
+              setSolutionCount(count);
+              setSpecificSolution(count);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         }
       })
       .catch((error) => {
@@ -174,61 +174,84 @@ function KanoodleSolver() {
         </Col>
         <Col span={6}>
           <div style={{ marginLeft: "10%" }}>
-            <Row>
-              <Col span={6}>
-                <Input value={specificSolution} />
+            {solutionCount > 0 ?
+              <Row>
+                <Col span={6}>
+                  <Input 
+                    value={specificSolution}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value > solutionCount) {
+                        setSpecificSolution(solutionCount);
+                      }
+                      else {
+                        setSpecificSolution(value);
+                      }
+                    }}
+                    status="valid"
+                  />
+                </Col>
+                <Col span={17}>
+                  <Button
+                    type="primary"
+                    style={{ marginLeft: "2%" }}
+                    onClick={() => {
+                      if (specificSolution <= solutionCount && specificSolution > 0) {
+                        setCurrentSolution(solution[specificSolution - 1]);
+                      }
+                    }}
+                  >
+                    Find Solution
+                  </Button>
+                </Col>
+              </Row>
+              : ""}
+
+            {solutionCount != null && solutionCount >= 0 ?
+              <Col span={16}>
+                <Title level={5}>
+                  {solutionCount.toLocaleString()} Solutions Generated
+                </Title>
               </Col>
-              <Col span={17}>
+              : ""}
+
+            {solutionCount ?
+              <div>
                 <Button
                   type="primary"
-                  style={{marginLeft : "2%"}}
+                  onClick={() => {
+                    if (currentSolution) {
+                      const currentIndex = solution.indexOf(currentSolution);
+                      const newIndex =
+                        currentIndex === 0
+                          ? solution.length - 1
+                          : currentIndex - 1;
+                      setCurrentSolution(solution[newIndex]);
+                    }
+                  }}
                 >
-                  Find Solution
+                  {" "}
+                  Previous Solution{" "}
+                </Button>{" "}
+                <Button
+                  style={{
+                    background: "#494D5F",
+                    color: "white",
+                    borderColor: "gray",
+                  }}
+                  onClick={() => {
+                    if (currentSolution) {
+                      const currentIndex = solution.indexOf(currentSolution);
+                      const newIndex = (currentIndex + 1) % solution.length;
+                      setCurrentSolution(solution[newIndex]);
+                    }
+                  }}
+                >
+                  {" "}
+                  Next Solution{" "}
                 </Button>
-              </Col>
-            </Row>
-
-            <Col span={16}>
-              <Title level={5}>
-                {solutionCount.toLocaleString()} Solutions Generated
-              </Title>
-            </Col>
-
-            <div>
-              <Button
-                type="primary"
-                onClick={() => {
-                  if (currentSolution) {
-                    const currentIndex = solution.indexOf(currentSolution);
-                    const newIndex =
-                      currentIndex === 0
-                        ? solution.length - 1
-                        : currentIndex - 1;
-                    setCurrentSolution(solution[newIndex]);
-                  }
-                }}
-              >
-                {" "}
-                Previous Solution{" "}
-              </Button>{" "}
-              <Button
-                style={{
-                  background: "#494D5F",
-                  color: "white",
-                  borderColor: "gray",
-                }}
-                onClick={() => {
-                  if (currentSolution) {
-                    const currentIndex = solution.indexOf(currentSolution);
-                    const newIndex = (currentIndex + 1) % solution.length;
-                    setCurrentSolution(solution[newIndex]);
-                  }
-                }}
-              >
-                {" "}
-                Next Solution{" "}
-              </Button>
-            </div>
+              </div>
+              : ""}
 
             <Row>
               <div style={{ marginTop: "5%" }}>
