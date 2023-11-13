@@ -3,13 +3,16 @@ import axios from "axios";
 import Grid from "./Grid";
 import { PieceDescriptions, Rotation } from "../common/pieces";
 import { handlePieceTiles } from "../common/handlePiece";
-import { Carousel } from "antd";
+import { Carousel, Input, Typography, Button, Row, Col } from "antd";
 import Piece from "./Pieces";
 import "./KanoodleSolver.scss";
-import { Typography, Button, Row, Col } from "antd";
-import { SwapOutlined, RotateRightOutlined,StepBackwardOutlined ,StepForwardOutlined } from "@ant-design/icons";
+import {
+  SwapOutlined,
+  RotateRightOutlined,
+  StepBackwardOutlined,
+  StepForwardOutlined,
+} from "@ant-design/icons";
 import Spinner from "../common/spinner";
-
 
 function KanoodleSolver() {
   const [pieces, setPieces] = useState(PieceDescriptions);
@@ -19,41 +22,56 @@ function KanoodleSolver() {
   const [solutionCount, setSolutionCount] = useState(0);
   const [currentSolution, setCurrentSolution] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [specificSolution, setSpecificSolution] = useState("");
 
   const handleRotate = () => {
     const rotationValues = Object.values(Rotation);
     const currentIndex = rotationValues.indexOf(selectedPiece.rotation);
     const newRotationIndex = (currentIndex + 1) % rotationValues.length;
     const newRotation = rotationValues[newRotationIndex];
-    const newPiece = handlePieceTiles({ ...selectedPiece, rotation: newRotation });
+    const newPiece = handlePieceTiles({
+      ...selectedPiece,
+      rotation: newRotation,
+    });
     setSelectedPiece(newPiece);
-    setPieces(pieces.map((piece) => {
-      if (piece.symbol === newPiece.symbol) {
-        return newPiece
-      }
-      return piece;
-    }));
-  }
+    setPieces(
+      pieces.map((piece) => {
+        if (piece.symbol === newPiece.symbol) {
+          return newPiece;
+        }
+        return piece;
+      })
+    );
+  };
 
   const handleFlip = () => {
-    const newPiece = handlePieceTiles({ ...selectedPiece, flipState: !selectedPiece.flipState });
+    const newPiece = handlePieceTiles({
+      ...selectedPiece,
+      flipState: !selectedPiece.flipState,
+    });
     setSelectedPiece(newPiece);
-    setPieces(pieces.map((piece) => {
-      if (piece.symbol === newPiece.symbol) {
-        return newPiece
-      }
-      return piece;
-    }));
-  }
+    setPieces(
+      pieces.map((piece) => {
+        if (piece.symbol === newPiece.symbol) {
+          return newPiece;
+        }
+        return piece;
+      })
+    );
+  };
 
   const handleSolve = () => {
-    //handle API call to solve  
-    axios.post('https://task3.ase2023group4.rocks/kanoodle', initialPiecePlacement)
+    //handle API call to solve
+    axios
+      .post("https://task3.ase2023group4.rocks/kanoodle", initialPiecePlacement)
       .then((response) => {
         const { solutions, count } = response.data.data;
         setSolution(solutions);
         setSolutionCount(count);
+
+        setSpecificSolution(count);
         setCurrentSolution(solutions[0] || []);
+
       })
       .catch((error) => {
         console.log(error);
@@ -89,9 +107,16 @@ function KanoodleSolver() {
             ))}
           </Carousel>
 
-          <div style={{paddingLeft: "48%"}}>
-            <Button onClick={handlePrev} size="30%" icon={<StepBackwardOutlined />}></Button>
-            <Button onClick={handleNext} icon={<StepForwardOutlined />}></Button>
+          <div style={{ paddingLeft: "48%" }}>
+            <Button
+              onClick={handlePrev}
+              size="30%"
+              icon={<StepBackwardOutlined />}
+            ></Button>
+            <Button
+              onClick={handleNext}
+              icon={<StepForwardOutlined />}
+            ></Button>
           </div>
         </Col>
       </Row>
@@ -138,9 +163,26 @@ function KanoodleSolver() {
         </Col>
         <Col span={6}>
           <div style={{ marginLeft: "10%" }}>
-            <Title level={5}>
-              {solutionCount.toLocaleString()} Solutions Generated
-            </Title>
+            <Row>
+              <Col span={6}>
+                <Input value={specificSolution} />
+              </Col>
+              <Col span={17}>
+                <Button
+                  type="primary"
+                  style={{marginLeft : "2%"}}
+                >
+                  Find Solution
+                </Button>
+              </Col>
+            </Row>
+
+            <Col span={16}>
+              <Title level={5}>
+                {solutionCount.toLocaleString()} Solutions Generated
+              </Title>
+            </Col>
+
             <div>
               <Button
                 type="primary"
