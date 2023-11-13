@@ -7,7 +7,7 @@ import { Carousel } from "antd";
 import Piece from "./Pieces";
 import "./KanoodleSolver.scss";
 import { Typography, Button, Row, Col } from "antd";
-import { SwapOutlined, RotateRightOutlined,StepBackwardOutlined ,StepForwardOutlined } from "@ant-design/icons";
+import { SwapOutlined, RotateRightOutlined, StepBackwardOutlined, StepForwardOutlined } from "@ant-design/icons";
 import Spinner from "../common/spinner";
 
 
@@ -16,7 +16,7 @@ function KanoodleSolver() {
   const [selectedPiece, setSelectedPiece] = useState(pieces[0]);
   const [initialPiecePlacement, setInitialPiecePlacement] = useState([]);
   const [solution, setSolution] = useState([]);
-  const [solutionCount, setSolutionCount] = useState(0);
+  const [solutionCount, setSolutionCount] = useState(null);
   const [currentSolution, setCurrentSolution] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,19 +47,33 @@ function KanoodleSolver() {
   }
 
   const handleSolve = () => {
+    setIsLoading(true);
     //handle API call to solve  
-    axios.post('https://task3.ase2023group4.rocks/kanoodle', initialPiecePlacement)
+    axios.post('https://task3.ase2023group4.rocks/kanoodle', { initialPieces: initialPiecePlacement, limit: 1000 })
       .then((response) => {
         const { solutions, count } = response.data.data;
         setSolution(solutions);
-        setSolutionCount(count);
         setCurrentSolution(solutions[0] || []);
+        if (count < 1000) {
+          setSolutionCount(count);
+          setIsLoading(false);
+        }else{
+          setSolutionCount(-1);
+          axios.post('https://task3.ase2023group4.rocks/kanoodle', { initialPieces: initialPiecePlacement })
+          .then((response) => {
+            const { solutions, count } = response.data.data;
+            setSolution(solutions);
+            setSolutionCount(count);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }
       })
       .catch((error) => {
         console.log(error);
       });
-
-    setIsLoading(false);
   };
 
   const onChange = (index) => {
@@ -89,7 +103,7 @@ function KanoodleSolver() {
             ))}
           </Carousel>
 
-          <div style={{paddingLeft: "48%"}}>
+          <div style={{ paddingLeft: "48%" }}>
             <Button onClick={handlePrev} size="30%" icon={<StepBackwardOutlined />}></Button>
             <Button onClick={handleNext} icon={<StepForwardOutlined />}></Button>
           </div>
@@ -138,44 +152,49 @@ function KanoodleSolver() {
         </Col>
         <Col span={6}>
           <div style={{ marginLeft: "10%" }}>
-            <Title level={5}>
-              {solutionCount.toLocaleString()} Solutions Generated
-            </Title>
-            <div>
-              <Button
-                type="primary"
-                onClick={() => {
-                  if (currentSolution) {
-                    const currentIndex = solution.indexOf(currentSolution);
-                    const newIndex =
-                      currentIndex === 0
-                        ? solution.length - 1
-                        : currentIndex - 1;
-                    setCurrentSolution(solution[newIndex]);
-                  }
-                }}
-              >
-                {" "}
-                Previous Solution{" "}
-              </Button>{" "}
-              <Button
-                style={{
-                  background: "#494D5F",
-                  color: "white",
-                  borderColor: "gray",
-                }}
-                onClick={() => {
-                  if (currentSolution) {
-                    const currentIndex = solution.indexOf(currentSolution);
-                    const newIndex = (currentIndex + 1) % solution.length;
-                    setCurrentSolution(solution[newIndex]);
-                  }
-                }}
-              >
-                {" "}
-                Next Solution{" "}
-              </Button>
-            </div>
+            {solutionCount == null || solutionCount < 0  ?
+              "" :
+              <Title level={5}>
+                {solutionCount.toLocaleString()} Solutions Generated
+              </Title>
+            }
+            {solutionCount ?
+              <div>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    if (currentSolution) {
+                      const currentIndex = solution.indexOf(currentSolution);
+                      const newIndex =
+                        currentIndex === 0
+                          ? solution.length - 1
+                          : currentIndex - 1;
+                      setCurrentSolution(solution[newIndex]);
+                    }
+                  }}
+                >
+                  {" "}
+                  Previous Solution{" "}
+                </Button>{" "}
+                <Button
+                  style={{
+                    background: "#494D5F",
+                    color: "white",
+                    borderColor: "gray",
+                  }}
+                  onClick={() => {
+                    if (currentSolution) {
+                      const currentIndex = solution.indexOf(currentSolution);
+                      const newIndex = (currentIndex + 1) % solution.length;
+                      setCurrentSolution(solution[newIndex]);
+                    }
+                  }}
+                >
+                  {" "}
+                  Next Solution{" "}
+                </Button>
+              </div>
+              : ""}
 
             <Row>
               <div style={{ marginTop: "5%" }}>
@@ -189,8 +208,7 @@ function KanoodleSolver() {
             </Row>
             <Row>
               <div style={{ marginTop: "20%", marginLeft: "35%" }}>
-                {/* {isLoading ? <Spinner /> : ""} */}
-                <Spinner />
+                {isLoading ? <Spinner /> : ""}
               </div>
             </Row>
           </div>

@@ -117,7 +117,7 @@ function Grid({
     setOccupiedCells([]);
     setHighlightedCells([]);
     setSolution([]);
-    setSolutionCount(0);
+    setSolutionCount(null);
     setCurrentSolution([]);
     slider.current.goTo(0);
     const coloredCells = document.querySelectorAll(".grid-cell");
