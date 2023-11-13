@@ -19,7 +19,7 @@ function KanoodleSolver() {
   const [selectedPiece, setSelectedPiece] = useState(pieces[0]);
   const [initialPiecePlacement, setInitialPiecePlacement] = useState([]);
   const [solution, setSolution] = useState([]);
-  const [solutionCount, setSolutionCount] = useState(0);
+  const [solutionCount, setSolutionCount] = useState(null);
   const [currentSolution, setCurrentSolution] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [specificSolution, setSpecificSolution] = useState("");
@@ -61,23 +61,34 @@ function KanoodleSolver() {
   };
 
   const handleSolve = () => {
-    //handle API call to solve
-    axios
-      .post("https://task3.ase2023group4.rocks/kanoodle", initialPiecePlacement)
+    setIsLoading(true);
+    //handle API call to solve  
+    axios.post('https://task3.ase2023group4.rocks/kanoodle', { initialPieces: initialPiecePlacement, limit: 1000 })
       .then((response) => {
         const { solutions, count } = response.data.data;
         setSolution(solutions);
-        setSolutionCount(count);
-
-        setSpecificSolution(count);
         setCurrentSolution(solutions[0] || []);
-
+        if (count < 1000) {
+          setSolutionCount(count);
+          setIsLoading(false);
+        }else{
+          setSolutionCount(-1);
+          axios.post('https://task3.ase2023group4.rocks/kanoodle', { initialPieces: initialPiecePlacement })
+          .then((response) => {
+            const { solutions, count } = response.data.data;
+            setSolution(solutions);
+            setSolutionCount(count);
+            setSpecificSolution(count);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }
       })
       .catch((error) => {
         console.log(error);
       });
-
-    setIsLoading(false);
   };
 
   const onChange = (index) => {
@@ -231,8 +242,7 @@ function KanoodleSolver() {
             </Row>
             <Row>
               <div style={{ marginTop: "20%", marginLeft: "35%" }}>
-                {/* {isLoading ? <Spinner /> : ""} */}
-                <Spinner />
+                {isLoading ? <Spinner /> : ""}
               </div>
             </Row>
           </div>
