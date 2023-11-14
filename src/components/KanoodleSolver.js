@@ -207,11 +207,7 @@ function KanoodleSolver() {
               </Row>
               : ""}
 
-<<<<<<< HEAD
-            {solutionCount > 0 ?
-=======
             {solutionCount != null && solutionCount >= 0 ?
->>>>>>> f30318285a0c1bf3205846ee317a888e98bccec5
               <Col span={16}>
                 <Title level={5}>
                   {solutionCount.toLocaleString()} Solutions Generated
