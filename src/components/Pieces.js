@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Pieces.scss';
 
 function Piece({ key, index, piece }) {
@@ -10,8 +10,8 @@ function Piece({ key, index, piece }) {
         ROTATION_180: 'rotate(180deg)',
         ROTATION_270: 'rotate(270deg)',
     };
+    const [loading, setLoading] = useState(true);
     
-
     useEffect(() => {
         pieceRef.current.style.transform = `${rotateStyle[piece.rotation] || rotateStyle.ROTATION_0} ${piece.flipState ? 'scaleX(-1)' : ''}`;
 
@@ -20,11 +20,15 @@ function Piece({ key, index, piece }) {
 
         pieceRef.current.style.width = width + 'px';
         pieceRef.current.style.height = height + 'px';
+
+        setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [piece]);
 
     return (
-        <div className='piece' ref={pieceRef}>
+        <div className='piece' ref={pieceRef} style={{
+            visibility: loading ? 'hidden' : 'visible',
+        }}>
             {piece.originalTiles.map((tile, index) => (
                 <div
                     className="tile"
