@@ -63,7 +63,7 @@ function KanoodleSolver() {
   const handleSolve = () => {
     setIsLoading(true);
     //handle API call to solve  
-    axios.post('http://localhost:80/kanoodle', { initialPieces: initialPiecePlacement, limit: 1000 })
+    axios.post('https://task3.ase2023group4.rocks/kanoodle', { initialPieces: initialPiecePlacement, limit: 1000 })
       .then((response) => {
         const { solutions, count } = response.data.data;
         setSolution(solutions);
